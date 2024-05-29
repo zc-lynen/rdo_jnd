@@ -59,6 +59,10 @@
 #include "av1/encoder/segmentation.h"
 #include "av1/encoder/tokenize.h"
 
+#if JND
+#include "jnd.h"
+#endif
+
 static void encode_superblock(const AV1_COMP *const cpi, TileDataEnc *tile_data,
                               ThreadData *td, TOKENEXTRA **t, RUN_TYPE dry_run,
                               int mi_row, int mi_col, BLOCK_SIZE bsize,
@@ -258,6 +262,36 @@ static void set_offsets_without_segment_id(const AV1_COMP *const cpi,
 
   // R/D setup.
   x->rdmult = cpi->rd.RDMULT;
+
+#if JND
+  double jndFactor = jnd_calculation_sb(cpi, mi_row, mi_col, bsize);
+  // 1. adjust qindex
+  // copy from av1_init_plane_quantizers()
+  int current_qindex = AOMMAX(
+      0, AOMMIN(QINDEX_RANGE - 1, cpi->oxcf.deltaq_mode != NO_DELTA_Q
+                                      ? cm->base_qindex + xd->delta_qindex
+                                      : cm->base_qindex));
+  int qindex = av1_get_qindex(&cm->seg, xd->mi[0]->segment_id, current_qindex);
+  qindex = round(qindex * sqrt(jndFactor));
+
+  // Y component
+  const QUANTS *const quants = &cpi->quants;
+  x->plane[0].quant_QTX = quants->y_quant[qindex];
+  x->plane[0].quant_fp_QTX = quants->y_quant_fp[qindex];
+  x->plane[0].round_fp_QTX = quants->y_round_fp[qindex];
+  x->plane[0].quant_shift_QTX = quants->y_quant_shift[qindex];
+  x->plane[0].zbin_QTX = quants->y_zbin[qindex];
+  x->plane[0].round_QTX = quants->y_round[qindex];
+  x->plane[0].dequant_QTX = cpi->dequants.y_dequant_QTX[qindex];
+  xd->plane[0].dequant_Q3 = cpi->dequants.y_dequant_Q3[qindex];
+
+  // 2. adjust rdmult
+  // copy from av1_compute_rd_mult() 8bit
+  int64_t q =
+      av1_dc_quant_Q3(qindex + cm->y_dc_delta_q, 0, cpi->common.bit_depth);
+  int rdmult = 88 * q * q / 24;
+  x->rdmult = rdmult;
+#endif
 
   // required by av1_append_sub8x8_mvs_for_idx() and av1_find_best_ref_mvs()
   xd->tile = *tile;
@@ -4133,6 +4167,13 @@ void av1_encode_tile(AV1_COMP *cpi, ThreadData *td, int tile_row,
   av1_crc32c_calculator_init(&td->mb.mb_rd_record.crc_calculator);
 
   td->intrabc_used_this_tile = 0;
+
+#if JND
+  init_buffer(cpi);
+  jnd_matInitialize();
+  jnd_calculation_mi(cpi);
+  jnd_matTerminate();
+#endif
 
   for (mi_row = tile_info->mi_row_start; mi_row < tile_info->mi_row_end;
        mi_row += cm->seq_params.mib_size) {

@@ -21,6 +21,7 @@ extern "C" {
 #endif
 
 #define DELTAQ_MODULATION 0  // 0: variance based, 1: wavelet AC energy based
+#define JND 1
 
 struct macroblock;
 struct yv12_buffer_config;
