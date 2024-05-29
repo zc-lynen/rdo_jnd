@@ -104,7 +104,7 @@ extern void jnd_calculation_mi(AV1_COMP *cpi) {
 
   // jnd factor weigh
   // _, jnd_map, jnd_LA, jnd_CM, jnd_PM, jnd_PM_p 
-  double weight[6] = { 0, 1, 0, 10, 0, 0 };
+  double weight[6] = { 0, 1, 0, 20, 0, 0 };
   for (int i = 0; i < picHeightY; ++i) {
     for (int j = 0; j < picWidthY; ++j) {
       jnd_factor[i][j] = (weight[1] * jnd_factor1[j + i * picWidthY] +

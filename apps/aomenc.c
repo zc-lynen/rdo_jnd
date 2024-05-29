@@ -1748,11 +1748,13 @@ static void get_cx_data(struct stream_state *stream,
 
           stream->psnr_sse_total += pkt->data.psnr.sse[0];
           stream->psnr_samples_total += pkt->data.psnr.samples[0];
+          fprintf(stderr, "\nPSNR: ");
           for (i = 0; i < 4; i++) {
             if (!global->quiet)
               fprintf(stderr, "%.3f ", pkt->data.psnr.psnr[i]);
             stream->psnr_totals[i] += pkt->data.psnr.psnr[i];
           }
+          fprintf(stderr, "\n");
           stream->psnr_count++;
         }
 
