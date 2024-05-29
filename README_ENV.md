@@ -1,7 +1,7 @@
 # JND-based Perceptual Rate Distortion Optimization for AV1 Encoder (PCS2019)
 
 ## 环境配置
-### 代码的基础环境是vs2019和matlab2019b，其余环境和build流程请参考[官方说明](https://aomedia.googlesource.com/aom/)和[相关资料](https://blog.csdn.net/Annie_heyeqq/article/details/126728967)：
+### 代码的基础环境是aom v1.0.0, vs2019, matlab2019b，其余环境和build流程请参考[官方说明](https://aomedia.googlesource.com/aom/)和[相关资料](https://blog.csdn.net/Annie_heyeqq/article/details/126728967)：
 * [CMake](https://cmake.org/)
 * [Git](https://git-scm.com/)
 * [Perl](https://www.perl.org/)
