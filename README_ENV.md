@@ -20,8 +20,8 @@ mcc -W lib:jnd_mat -T link:lib func_JND_modeling_pattern_complexity.m
 ```
 * 将产生的jnd_mat.h和jnd_mat.c移动至av1/encoder目录，jnd_mat.lib移动至build目录，jnd_mat.dll移动至.exe可执行文件目录
 * 配置VS包含目录：选择项目aomenc和aom_av1_encoder属性的'VC++目录'选项卡，在'包含目录'中添加matlab头文件路径：“matlab安装路径”\extern\include
-* 配置VS库目录：选择项目aomenc属性的'VC++目录'选项卡，在'包含目录'中添加matlab静态链接库路径：“matlab安装路径”\extern\lib\win64\microsoft
-* 配置链接器。项目aomenc属性的链接器->输入：mclmcrrt.lib; mclmcr.lib; libmat.lib; libmx.lib
+* 配置VS库目录：选择项目aomenc属性的'VC++目录'选项卡，在'库目录'中添加matlab静态链接库路径：“matlab安装路径”\extern\lib\win64\microsoft
+* 配置链接器：项目aomenc属性的链接器->输入：mclmcrrt.lib; mclmcr.lib; libmat.lib; libmx.lib
 
 注意：配置目录时，属性页选择'所有配置'
 
